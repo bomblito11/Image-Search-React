@@ -10,7 +10,6 @@ export const App = () => {
   const [images, setImages] = useState([]);
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [show, setShow] = useState(false);
   const [modal, setModal] = useState('');
@@ -38,7 +37,6 @@ export const App = () => {
       setIsLoading(false);
     } catch (error) {
       console.log(error);
-      setError(error);
     } finally {
       setIsLoading(false);
     }
