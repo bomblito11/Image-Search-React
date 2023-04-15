@@ -4,7 +4,14 @@ import { ThreeDots } from '../../../node_modules/react-loader-spinner/dist/index
 class Loader extends Component {
   render() {
     return (
-      <div>
+      <div
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
         <ThreeDots
           height="80"
           width="80"

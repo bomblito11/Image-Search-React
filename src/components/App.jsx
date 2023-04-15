@@ -1,103 +1,72 @@
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { getImages } from '../utils/api';
 import LoadMoreButton from './LoadMoreButton/LoadMoreButton';
 import Loader from './Loader/Loader';
-import Modal from './Modal/Modal';
+import { Modal } from './Modal/Modal';
 
-class App extends Component {
-  state = {
-    images: [],
-    query: '',
-    isLoading: false,
-    error: '',
-    page: 1,
-    show: false,
-    modal: '',
+export const App = () => {
+  const [images, setImages] = useState([]);
+  const [query, setQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [show, setShow] = useState(false);
+  const [modal, setModal] = useState('');
+
+  const showModal = url => {
+    setShow(true);
+    setModal(url);
   };
 
-  showModal = url => {
-    this.setState({
-      show: true,
-      modal: url,
-    });
+  const closeModal = () => {
+    setShow(false);
+    setModal('url');
   };
 
-  closeModal = () => {
-    this.setState({
-      show: false,
-      modal: '',
-    });
+  const handleChange = query => {
+    setQuery(query.target.value);
   };
 
-  handleChange = query => {
-    this.setState({
-      query: query.target.value,
-    });
-  };
-
-  handleSubmit = async () => {
-    this.setState({
-      isLoading: true,
-    });
+  const handleSubmit = async () => {
+    setIsLoading(true);
     try {
-      const response = await getImages(this.state.query, 1);
-      this.setState(() => {
-        return {
-          images: [...response],
-          page: this.state.page + 1,
-          isLoading: false,
-        };
-      });
+      const response = await getImages(query, 1);
+      setImages([...response]);
+      setPage(page + 1);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
-      this.setState({
-        error,
-      });
+      setError(error);
     } finally {
-      this.setState({
-        isLoading: false,
-      });
+      setIsLoading(false);
     }
   };
 
-  handleMoreImage = async () => {
-    this.setState({
-      isLoading: true,
-    });
-    const response = await getImages(this.state.query, this.state.page);
-    this.setState(() => {
-      return {
-        images: [...this.state.images, ...response],
-        page: this.state.page + 1,
-        isLoading: false,
-      };
-    });
+  const handleMoreImage = async () => {
+    setIsLoading(true);
+    const response = await getImages(query, page);
+    setImages(prevImages => [...prevImages, ...response]);
+    setPage(prevPage => prevPage + 1);
+    setIsLoading(false);
   };
 
-  render() {
-    const { images, isLoading, modal, show } = this.state;
+  return (
+    <>
+      <Searchbar handleSubmit={handleSubmit} handleChange={handleChange} />
+      {isLoading && <Loader />}
+      <ImageGallery images={images} openModal={showModal} />
 
-    return (
-      <>
-        <Searchbar
-          handleSubmit={this.handleSubmit}
-          handleChange={this.handleChange}
-        />
-        {isLoading && <Loader />}
-        <ImageGallery images={images} openModal={this.showModal} />
+      {show && (
+        <Modal show={show} largeImgSrc={modal} closeModal={closeModal} />
+      )}
 
-        {show && (
-          <Modal show={show} largeImgSrc={modal} closeModal={this.closeModal} />
-        )}
-
-        {images.length > 0 && (
-          <LoadMoreButton handleMoreImage={this.handleMoreImage} />
-        )}
-      </>
-    );
-  }
-}
+      {images.length > 0 && (
+        <LoadMoreButton handleMoreImage={handleMoreImage} />
+      )}
+    </>
+  );
+};
 
 export default App;
