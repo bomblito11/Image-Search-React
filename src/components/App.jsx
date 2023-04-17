@@ -1,9 +1,9 @@
-import Searchbar from './Searchbar/Searchbar';
-import ImageGallery from './ImageGallery/ImageGallery';
+import { Searchbar } from './Searchbar/Searchbar';
+import { ImageGallery } from './ImageGallery/ImageGallery';
 import React, { useState } from 'react';
 import { getImages } from '../utils/api';
-import LoadMoreButton from './LoadMoreButton/LoadMoreButton';
-import Loader from './Loader/Loader';
+import { LoadMoreButton } from './LoadMoreButton/LoadMoreButton';
+import { Loader } from './Loader/Loader';
 import { Modal } from './Modal/Modal';
 
 export const App = () => {
